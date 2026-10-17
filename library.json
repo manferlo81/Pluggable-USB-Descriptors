@@ -26,6 +26,10 @@
         "include": [
             "src",
             "examples"
+        ],
+        "exclude": [
+            ".editorconfig",
+            ".clang-format"
         ]
     },
     "frameworks": "arduino",
