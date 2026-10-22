@@ -10,7 +10,7 @@ Pluggable_USB_Descriptors::Pluggable_USB_Descriptors(const char* productName) : 
     setProductName(productName);
 
     // Plug USB device into PluggableUSB API
-    PluggableUSB().plug(this);
+    plug();
 
 }  //
 
@@ -64,6 +64,14 @@ void Pluggable_USB_Descriptors::setSerialNumber(const char* serialNumber) {
 #warning "ISERIAL is not defined, therefore setSerialNumber has no effect"
 
 #endif
+}
+
+//  +-----------------------+  //
+// (  Functionality Methods  ) //
+//  +-----------------------+  //
+
+void Pluggable_USB_Descriptors::plug() {
+    PluggableUSB().plug(this);
 }
 
 //  +---------------------------------------+  //
@@ -125,13 +133,13 @@ void Pluggable_USB_Descriptors::p__USB_sendAnsiCharAsUnicode(const char ch) {
 
 int Pluggable_USB_Descriptors::p__USB_sendStringDescriptor(const char* descriptor) {  //
 
-    // Declare constants
-    constexpr uint8_t MAX_STRING_DESCRIPTOR_LENGTH = 31;
-    constexpr uint8_t USB_STRING_DESCRIPTOR_HEADER_SIZE = 2 * sizeof(uint8_t);
-    constexpr uint8_t DESCRIPTOR_TYPE_STRING = (uint8_t)USB_STRING_DESCRIPTOR_TYPE;
-
     // Exit if descriptor is NULL
     if (!descriptor) return 0;
+
+    // Declare constants
+    static constexpr uint8_t MAX_STRING_DESCRIPTOR_LENGTH = 31;
+    static constexpr uint8_t USB_STRING_DESCRIPTOR_HEADER_SIZE = 2 * sizeof(uint8_t);
+    static constexpr uint8_t DESCRIPTOR_TYPE_STRING = (uint8_t)USB_STRING_DESCRIPTOR_TYPE;
 
     // Get descriptor length (capped at 31 chars to fit standard USB limits)
     const uint8_t descriptorLength = strnlen(descriptor, MAX_STRING_DESCRIPTOR_LENGTH);
@@ -168,10 +176,10 @@ int Pluggable_USB_Descriptors::p__USB_sendDeviceDescriptor() {  //
     // Hand off to default core handler if IDs are not set
     if (!p__IDs_Set) return 0;
 
-    constexpr uint8_t DEVICE_CLASS = 0x00;
-    constexpr uint8_t DEVICE_SUB_CLASS = 0x00;
-    constexpr uint8_t DEVICE_PROTOCOL = 0x00;
-    constexpr uint16_t DEVICE_VERSION = 0x0100;
+    static constexpr uint8_t DEVICE_CLASS = 0x00;
+    static constexpr uint8_t DEVICE_SUB_CLASS = 0x00;
+    static constexpr uint8_t DEVICE_PROTOCOL = 0x00;
+    static constexpr uint16_t DEVICE_VERSION = 0x0100;
 
     // Initialize device descriptor
     DeviceDescriptor deviceDescriptor = {

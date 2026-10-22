@@ -33,6 +33,9 @@ public:
     void setManufacturer(const char* manufacturer);
     void setSerialNumber(const char* serialNumber);
 
+private:
+    void plug();
+
 protected:
     bool setup(USBSetup&) override final;
     int getInterface(uint8_t*) override final;
