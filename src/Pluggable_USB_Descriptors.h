@@ -4,49 +4,55 @@
 
 class Pluggable_USB_Descriptors : protected PluggableUSBModule {  //
 
-    private:
-        uint16_t p__vendorID = 0x0000;
-        uint16_t p__productID = 0x0000;
-        bool p__IDs_set = false;
+private:
+    uint16_t p__VendorID = 0x0000;
+    uint16_t p__ProductID = 0x0000;
+    bool p__IDs_Set = false;
 
-#if (IMANUFACTURER)
-        // It is possible to set a manufacturer name
-        const char* p__manufacturer = nullptr;
+#if (IPRODUCT)  // It is possible to set a product name
+private:
+    const char* p__ProductName;
 #endif
 
-#if (IPRODUCT)
-        // It is possible to set a product name
-        const char* p__productName = nullptr;
+#if (IMANUFACTURER)  // It is possible to set a manufacturer name
+private:
+    const char* p__Manufacturer = nullptr;
 #endif
 
-#if (ISERIAL)
-        // It is possible to set a serial number
-        const char* p__serialNumber = nullptr;
+#if (ISERIAL)  // It is possible to set a serial number
+private:
+    const char* p__SerialNumber = nullptr;
 #endif
 
-    private:
-        int p__USB_sendDeviceDescriptor();
+public:
+    Pluggable_USB_Descriptors(const char* productName = nullptr);
 
-#if (IMANUFACTURER || IPRODUCT || ISERIAL)
-        // String descriptors supported
+public:
+    void setIDs(const uint16_t vendorID, const uint16_t productID);
+    void setProductName(const char* productName);
+    void setManufacturer(const char* manufacturer);
+    void setSerialNumber(const char* serialNumber);
 
-    private:
-        int p__USB_sendStringDescriptorByIndex(const uint8_t descriptorIndex);
+protected:
+    bool setup(USBSetup&) override final;
+    int getInterface(uint8_t*) override final;
+    int getDescriptor(USBSetup&) override final;
 
+private:
+    static int p__USB_send(const void* data, const int dataSize);
+
+#if (IMANUFACTURER || IPRODUCT || ISERIAL)  // It is possible to set string descriptors
+private:
+    static void p__USB_sendAnsiCharAsUnicode(const char ch);
+    static int p__USB_sendStringDescriptor(const char* descriptor);
 #endif
 
-    protected:
-        bool setup(USBSetup&) override final;
-        int getInterface(uint8_t*) override final;
-        int getDescriptor(USBSetup& setup) override final;
+private:
+    int p__USB_sendDeviceDescriptor();
 
-    public:
-        Pluggable_USB_Descriptors();
-        Pluggable_USB_Descriptors(const char* productName);
-
-        void setIDs(const uint16_t vid, const uint16_t pid);
-        void setProductName(const char* productName);
-        void setManufacturer(const char* manufacturer);
-        void setSerialNumber(const char* serialNumber);
+#if (IMANUFACTURER || IPRODUCT || ISERIAL)  // It is possible to set string descriptors
+private:
+    int p__USB_sendStringDescriptorByIndex(const uint8_t);
+#endif
 
 };  //
